@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, ScrollView, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  FlatList
+} from 'react-native';
+
+import LembreteItem from './componentes/LembreteItem';
+
+import LembreteInput from './componentes/LembreteInput';
 
 export default function App() {
 
-  const [lembrete, setLembrete] = useState('');
+  //const [lembrete, setLembrete] = useState('');
 
   const [lembretes, setLembretes] = useState([]);
 
   const [contadorLembretes, setContadorLembretes] = useState(0);
 
-  const capturarLembrete = (lembrete) => {
+  /*const capturarLembrete = (lembrete) => {
     setLembrete(lembrete);
-  }
+  }*/
 
-  const adicionarLembrete = () => {
+  const adicionarLembrete = (lembrete) => {
     setLembretes((lembretes) => {
       setContadorLembretes(contadorLembretes + 1);
       return [...lembretes, { key: contadorLembretes.toString(), value: lembrete }]
@@ -22,22 +33,16 @@ export default function App() {
     //console.log(lembrete);
   }
 
+  const removerLembrete = (keyASerRemovida) => {
+    setLembretes(lembretes => {
+      return lembretes.filter((lembrete) => { return lembrete.key !== keyASerRemovida })
+    })
+  }
+
   return (
     <View style={estilos.telaPrincipalView}>
 
-      <View style={estilos.lembreteView}>
-        {/*usuário irá inserir lembretes aqui */}
-        <TextInput
-          placeholder="Lembrar..."
-          style={estilos.lembreteTextInput}
-          onChangeText={capturarLembrete}
-          value={lembrete}
-        />
-        <Button
-          title="+"
-          onPress={adicionarLembrete}
-        />
-      </View>
+      <LembreteInput onAdicionarLembrete={adicionarLembrete} />
 
       <View>
 
@@ -46,9 +51,11 @@ export default function App() {
           data={lembretes}
           renderItem={
             lembrete => (
-              <View style={estilos.itemNaLista}>
-                <Text>{lembrete.item.value}</Text>
-              </View>
+              <LembreteItem
+                chave={lembrete.item.key}
+                lembrete={lembrete.item.value}
+                onDelete={removerLembrete}
+              />
             )
           }
         />
